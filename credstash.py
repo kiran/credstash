@@ -476,10 +476,10 @@ def getSecretAction(args, region, **session_params):
                 output_args = {}
             sys.stdout.write(output_func(secrets, **output_args))
         else:
-            sys.stdout.write(getSecret(args.credential, args.version,
+            sys.stdout.write(repr(getSecretAndMetadata(args.credential, args.version,
                                        region=region, table=args.table,
                                        context=args.context,
-                                       **session_params))
+                                       **session_params)))
             if not args.noline:
                 sys.stdout.write("\n")
     except ItemNotFound as e:
@@ -496,13 +496,13 @@ def getSecret(name, version="", region=None,
     '''
     fetch and decrypt the secret called `name`
     '''
-    secret, context = getSecretAndContext(name=name, version=version, region=region,
+    secret, context = getSecretAndMetadata(name=name, version=version, region=region,
                                           table=table, context=context, dynamodb=dynamodb,
                                           kms=kms, **kwargs)
     return secret
 
 
-def getSecretAndContext(name, version="", region=None,
+def getSecretAndMetadata(name, version="", region=None,
                         table="credential-store", context=None,
                         dynamodb=None, kms=None, **kwargs):
     """
